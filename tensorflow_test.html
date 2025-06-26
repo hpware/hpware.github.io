@@ -6,12 +6,20 @@
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.0"> </script>
 
-<img
-  id="img"
-  src="https://s3.yhw.tw/data/animals/fox.jpg"
-  class="w-1/2"
-  crossorigin="anonymous"
-/>
+<!-- Container for image and canvas: this is needed to layer the canvas over the image -->
+<div style="position: relative; display: inline-block;">
+  <img
+    id="img"
+    src="https://s3.yhw.tw/data/animals/fox.jpg"
+    class="w-1/2"
+    crossorigin="anonymous"
+  />
+  <!-- Canvas for drawing detections -->
+  <canvas
+    id="detectionCanvas"
+    style="position: absolute; top: 0; left: 0;"
+  ></canvas>
+</div>
 
 <p id="text"></p>
 <p id="text2"></p>
@@ -20,49 +28,105 @@
   const img = document.getElementById('img');
   const text = document.getElementById('text');
   const text2 = document.getElementById('text2');
+  const canvas = document.getElementById('detectionCanvas');
+  const ctx = canvas.getContext('2d');
 
-  // Load the coco-ssd model.
-  cocoSsd
-    .load()
-    .then((model) => {
-      // detect objects in the image.
-      model
-        .detect(img)
-        .then((predictions) => {
-          // Format coco-ssd predictions for display
-          text.innerHTML = predictions
-            .map(
-              (p) =>
-                `Detected: ${p.class} (Confidence: ${(p.score * 100).toFixed(
-                  2
-                )}%)`
-            )
-            .join('<br>'); // Join multiple predictions with a line break
-        })
-        .catch((error) => {
-          text.innerHTML = `Error during detection: ${error.message}`;
-          console.error('Detection error:', error);
-        });
-    })
-    .catch((error) => {
-      text.innerHTML = `Error loading model: ${error.message}`;
-      console.error('Model loading error:', error);
-    });
+  // Function to draw bounding boxes on the canvas
+  function drawBoundingBoxes(predictions) {
+    // Clear any previous drawings
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  mobilenet.load().then((model) => {
-    // Classify the image.
-    model.classify(img).then((predictions) => {
-      // Format MobileNet predictions for display
-      text2.innerHTML = predictions
-        .map(
-          (p) =>
-            `Class: ${p.className} (Probability: ${(p.probability * 100).toFixed(
-              2
-            )}%)`
-        )
-        .join('<br>'); // Join multiple predictions with a line break
-      console.log('Predictions: ');
-      console.log(predictions);
+    // Set canvas dimensions to match the displayed image dimensions
+    // This is crucial for correct scaling
+    canvas.width = img.offsetWidth;
+    canvas.height = img.offsetHeight;
+
+    // Calculate scaling factors from original image size to displayed size
+    const scaleX = img.offsetWidth / img.naturalWidth;
+    const scaleY = img.offsetHeight / img.naturalHeight;
+
+    predictions.forEach((p) => {
+      const [x, y, width, height] = p.bbox;
+
+      // Scale coordinates
+      const scaledX = x * scaleX;
+      const scaledY = y * scaleY;
+      const scaledWidth = width * scaleX;
+      const scaledHeight = height * scaleY;
+
+      // Draw the bounding box
+      ctx.beginPath();
+      ctx.rect(scaledX, scaledY, scaledWidth, scaledHeight);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#00FF00'; // Green color for the box
+      ctx.stroke();
+
+      // Draw the label (class and confidence)
+      ctx.fillStyle = '#00FF00'; // Green color for text
+      ctx.font = '16px Arial';
+      const label = `${p.class} (${(p.score * 100).toFixed(1)}%)`;
+      // Position the text above the box, or inside if too close to top
+      const textY = scaledY > 20 ? scaledY - 5 : scaledY + 15;
+      ctx.fillText(label, scaledX + 5, textY);
     });
-  });
+  }
+
+  // Ensure image is loaded before attempting to detect or draw
+  // The .onload handler guarantees the image's dimensions (offsetWidth, offsetHeight)
+  // are available for correct canvas sizing and scaling.
+  img.onload = () => {
+    // Load the coco-ssd model.
+    cocoSsd
+      .load()
+      .then((model) => {
+        // detect objects in the image.
+        model
+          .detect(img)
+          .then((predictions) => {
+            // Format coco-ssd predictions for display
+            text.innerHTML = predictions
+              .map(
+                (p) =>
+                  `Detected: ${p.class} (Confidence: ${(
+                    p.score * 100
+                  ).toFixed(2)}%)`
+              )
+              .join('<br>');
+
+            // Call the function to draw boxes on the image
+            drawBoundingBoxes(predictions);
+          })
+          .catch((error) => {
+            text.innerHTML = `Error during detection: ${error.message}`;
+            console.error('Detection error:', error);
+          });
+      })
+      .catch((error) => {
+        text.innerHTML = `Error loading model: ${error.message}`;
+        console.error('Model loading error:', error);
+      });
+
+    // Load the mobilenet model.
+    mobilenet.load().then((model) => {
+      // Classify the image.
+      model.classify(img).then((predictions) => {
+        // Format MobileNet predictions for display
+        text2.innerHTML = predictions
+          .map(
+            (p) =>
+              `Class: ${p.className} (Probability: ${(
+                p.probability * 100
+              ).toFixed(2)}%)`
+          )
+          .join('<br>');
+        console.log('MobileNet Predictions: ');
+        console.log(predictions);
+      });
+    });
+  };
+
+  // Handle cases where the image might already be in cache and onload doesn't fire
+  if (img.complete) {
+    img.onload();
+  }
 </script>
