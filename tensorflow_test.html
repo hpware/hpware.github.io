@@ -1,8 +1,9 @@
+<!--This file is partly written with AI (Model: Gemini 2.5 Flash (Thinking) https://t3.chat/chat/571b6c74-94f7-42b4-af90-b1d9a2060f3c-->
 <!-- Load TensorFlow.js. This is required to use coco-ssd model. -->
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
 <!-- Load the coco-ssd model. -->
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+<script src="https://cdn.cdnjsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@1.0.0"> </script>
 
 <img
@@ -19,7 +20,8 @@
   const img = document.getElementById('img');
   const text = document.getElementById('text');
   const text2 = document.getElementById('text2');
-  // Load the model.
+
+  // Load the coco-ssd model.
   cocoSsd
     .load()
     .then((model) => {
@@ -27,7 +29,15 @@
       model
         .detect(img)
         .then((predictions) => {
-          text.innerHTML = predictions;
+          // Format coco-ssd predictions for display
+          text.innerHTML = predictions
+            .map(
+              (p) =>
+                `Detected: ${p.class} (Confidence: ${(p.score * 100).toFixed(
+                  2
+                )}%)`
+            )
+            .join('<br>'); // Join multiple predictions with a line break
         })
         .catch((error) => {
           text.innerHTML = `Error during detection: ${error.message}`;
@@ -39,10 +49,18 @@
       console.error('Model loading error:', error);
     });
 
-    mobilenet.load().then(model => {
+  mobilenet.load().then((model) => {
     // Classify the image.
-    model.classify(img).then(predictions => {
-      text2.innerHTML= predictions;
+    model.classify(img).then((predictions) => {
+      // Format MobileNet predictions for display
+      text2.innerHTML = predictions
+        .map(
+          (p) =>
+            `Class: ${p.className} (Probability: ${(p.probability * 100).toFixed(
+              2
+            )}%)`
+        )
+        .join('<br>'); // Join multiple predictions with a line break
       console.log('Predictions: ');
       console.log(predictions);
     });
