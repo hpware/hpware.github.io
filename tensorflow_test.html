@@ -1,26 +1,61 @@
 <!-- Load TensorFlow.js. This is required to use coco-ssd model. -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"> </script>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
 <!-- Load the coco-ssd model. -->
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"> </script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
 
-<!-- Replace this with your image. Make sure CORS settings allow reading the image! -->
-<img id="img" src="https://s3.yhw.tw/data/animals/fox.jpg" class="w-1/2"/>
+<!--
+  Using an image from Wikimedia Commons which typically has
+  permissive CORS headers.
+  The 'crossorigin="anonymous"' attribute is crucial for
+  cross-origin images that are meant to be accessed by scripts.
+-->
+<img
+  id="img"
+  src="https://s3.yhw.tw/data/animals/fox.jpg"
+  class="w-1/2"
+  crossorigin="anonymous"
+/>
 
 <p id="text"></p>
 
-<!-- Place your code in the script tag below. You can also use an external .js file -->
 <script>
-  // Notice there is no 'import' statement. 'cocoSsd' and 'tf' is
-  // available on the index-page because of the script tag above.
-
   const img = document.getElementById('img');
-  const text = document.getElementById("text");
+  const text = document.getElementById('text');
 
   // Load the model.
-  cocoSsd.load().then(model => {
-    // detect objects in the image.
-    model.detect(img).then(predictions => {
-    text.innerHTML = predictions
-  });
+  cocoSsd
+    .load()
+    .then((model) => {
+      // detect objects in the image.
+      model
+        .detect(img)
+        .then((predictions) => {
+          // Check if any objects were detected
+          if (predictions.length > 0) {
+            let predictionHtml = 'Detected objects:<br>';
+            predictions.forEach((prediction) => {
+              predictionHtml += `
+        Class: ${prediction.class},
+        Score: ${ (prediction.score * 100).toFixed(2) }%,
+        Bounding Box: [${prediction.bbox
+                  .map((val) => val.toFixed(0))
+                  .join(', ')}]
+        <br>
+      `;
+            });
+            text.innerHTML = predictionHtml;
+          } else {
+            text.innerHTML = 'No objects detected.';
+          }
+        })
+        .catch((error) => {
+          text.innerHTML = `Error during detection: ${error.message}`;
+          console.error('Detection error:', error);
+        });
+    })
+    .catch((error) => {
+      text.innerHTML = `Error loading model: ${error.message}`;
+      console.error('Model loading error:', error);
+    });
 </script>
