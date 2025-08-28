@@ -9,19 +9,10 @@
   <meta name="generator" content="yhw_tw servers v2"/>
 </head>
   <style>
-        .gradient-layer {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-        }
-        .gradient-layer.active {
-            opacity: 1;
-        }
 </style>
 <body>
     <div id="gradient" class="absolute inset-0">
-        <div class="gradient-layer absolute inset-0 opacity-0 transition-opacity duration-1000 bg-gradient-to-bl from-blue-600 to-teal-800"></div>
+        <div class="gradient-layer absolute inset-0 opacity-0 transition-opacity duration-700 bg-gradient-to-bl from-blue-600 to-teal-800"></div>
         <div class="gradient-layer absolute inset-0 opacity-0 transition-opacity duration-1000 bg-gradient-to-bl from-green-700 to-teal-800"></div>
         <div class="gradient-layer absolute inset-0 opacity-0 transition-opacity duration-1000 bg-gradient-to-bl from-green-700 to-amber-800"></div>
         <div class="gradient-layer absolute inset-0 opacity-0 transition-opacity duration-1000 bg-gradient-to-bl from-blue-600 to-amber-800"></div>
@@ -29,8 +20,8 @@
 
     <!-- The content div now sits on top of the gradients -->
     <div class="flex flex-col justify-center text-center absolute inset-0 m-auto text-white z-10" id="main-content">
-        <span class="text-6xl translate-y-5">˙◠˙</span>
-        <span class="text-xl pt-1" id="text">Aw snap! The service you are trying to access does not exist or broke!</span>
+        <span class="text-6xl md:text-12xl translate-y-5">˙◠˙</span>
+        <span class="text-xl md:text-3xl pt-1" id="text">Aw snap! The service you are trying to access does not exist or broke!</span>
         <span class="text-blue-100 hover:text-amber-200 transition-all duration-300">
             <a href="mailto:ero@yhw.tw">ero@yhw.tw</a>
         </span>
@@ -42,18 +33,19 @@
     let colorIndex = 0;
     function applyNextColor() {
       if (gradientLayers[colorIndex]) {
-         gradientLayers[colorIndex].classList.remove("active");
+         gradientLayers[colorIndex].classList.remove("opacity-100");
       }
+
       colorIndex = (colorIndex + 1) % gradientLayers.length;
+
       if (gradientLayers[colorIndex]) {
-         gradientLayers[colorIndex].classList.add("active");
+         gradientLayers[colorIndex].classList.add("opacity-100");
       }
     }
-        if (gradientLayers.length > 0) {
-            gradientLayers[colorIndex].classList.add("active");
-        }
+
+    if (gradientLayers.length > 0) {
+        gradientLayers[colorIndex].classList.add("opacity-100");
     }
-    applyNextColor();
     setInterval(applyNextColor, 3000)
     const title = document.createElement('title');
     title.innerText = "Oops!";
