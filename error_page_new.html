@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+      <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+  <style>
+</style>
+<body>
+  <div class="flex flex-col justify-center text-center absolute inset-0 m-auto bg-gradient-to-bl from-blue-600 to-teal-800 text-white" >
+  <span class="text-6xl translate-y-5">˙◠˙</span>
+  <span class="text-xl pt-1" id="text">Aw snap! The service you are trying to access does not exist or broke!</span>
+  <span class=""></span>
+  </div>
+</body>
+  <script>
+    const main = document.getElementById("main");
+    const baseCSS = "flex flex-col justify-center text-center absolute inset-0 m-auto bg-gradient-to-bl"
+    const colors = ["from-blue-600 to-teal-800", "from-green-700 to-teal-800", "from-green-700 to-amber-800", "from-blue-600 to-amber-800"]
+    let colorIndex = 0;
+    function applyNextColor() {
+      main.className = `${baseCSS} bg-gradient-to-bl ${colors[colorIndex]}`;
+     colorIndex = (colorIndex + 1) % colors.length;
+    }
+    applyNextColor();
+    setInterval(applyNextColor, 3000)
+  </script>
+</html>
