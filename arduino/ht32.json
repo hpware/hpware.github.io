@@ -49,7 +49,7 @@
               "host": "i686-mingw32",
               "archiveFileName": "gcc-arm-none-eabi-4.8.3-2014q1-windows.tar.gz",
               "url": "http://downloads.arduino.cc/gcc-arm-none-eabi-4.8.3-2014q1-windows.tar.gz",
-              "checksum": "SHA-256:446A6087825FA73EADB045E5A2E9E2ADF7DF241B571228187728191D961DDA1F",
+              "checksum": "SHA-256:FD8C111C861144F932728E00ABD3F7D1107E186EB9CD6083A54C7236EA78B7C2",
               "size": "84537449"
             },
             {
