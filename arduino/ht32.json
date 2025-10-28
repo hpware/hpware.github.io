@@ -48,7 +48,7 @@
             {
               "host": "i686-mingw32",
               "archiveFileName": "gcc-arm-none-eabi-4.8.3-2014q1-windows.tar.gz",
-              "url": "http://downloads.arduino.cc/gcc-arm-none-eabi-4.8.3-2014q1-windows.tar.gz",
+              "url": "https://copyparty.yhw.tw/arduino/windows/gcc-arm-none-eabi-4.8.3-2014q1-windows.tar.gz",
               "checksum": "SHA-256:FD8C111C861144F932728E00ABD3F7D1107E186EB9CD6083A54C7236EA78B7C2",
               "size": "84537449"
             },
@@ -95,7 +95,7 @@
             },
             {
               "host": "i686-mingw32",
-              "url": "http://downloads.arduino.cc/tools/gcc-arm-none-eabi-7-2017-q4-major-win32-arduino1.zip",
+              "url": "https://copyparty.yhw.tw/arduino/windows/gcc-arm-none-eabi-7-2017-q4-major-win32-arduino1.zip",
               "archiveFileName": "gcc-arm-none-eabi-7-2017-q4-major-win32-arduino1.zip",
               "checksum": "SHA-256:96dd0091856f4d2eb21046eba571321feecf7d50b9c156f708b2a8b683903382",
               "size": "131761924"
